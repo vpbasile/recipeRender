@@ -1,0 +1,49 @@
+# style.yaml — all visual settings for recipe PDFs
+# Edit this file to restyle without touching recipes or render.py
+
+page:
+  size: letter          # letter or A4
+  margin_top: 0.75      # inches
+  margin_bottom: 0.75
+  margin_left: 0.85
+  margin_right: 0.85
+
+colors:
+  primary: "#1a1a1a"        # main text
+  secondary: "#4a4a4a"      # subtitle, secondary text
+  accent: "#8B3A2A"         # phase headers, rule lines
+  light: "#f5f0eb"          # alternating row / background tint
+  muted: "#888888"          # vessel labels, step numbers
+
+fonts:
+  # reportlab built-ins: Helvetica, Times-Roman, Courier (and Bold/Italic variants)
+  title: "Times-Roman"
+  subtitle: "Times-Roman"
+  heading: "Helvetica-Bold"
+  body: "Helvetica"
+  label: "Helvetica-Bold"
+
+sizes:
+  title: 28
+  subtitle: 13
+  page_heading: 18        # "Ingredients & Equipment", "Prep", "Cook"
+  phase_heading: 13
+  vessel_label: 11
+  body: 10.5
+  small: 9
+
+spacing:
+  after_title: 4          # points
+  after_subtitle: 18
+  after_page_heading: 14
+  after_phase: 6
+  after_vessel: 14
+  between_steps: 5
+  between_ingredients: 3
+  rule_thickness: 0.75    # points
+
+decorations:
+  show_rule_under_title: true
+  show_rule_under_page_heading: true
+  alternate_ingredient_rows: true
+  step_bullet: "·"        # character used before prep steps

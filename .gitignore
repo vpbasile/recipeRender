@@ -1,0 +1,43 @@
+# The output directory is the default output location, but we don't want to track the PDFs
+/output
+
+# In case you need a directory that doesn't sync
+/.ignores
+
+# These are necessary for the Python Environemt
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local generated outputs
+Output/*.pdf

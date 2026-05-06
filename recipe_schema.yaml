@@ -1,0 +1,76 @@
+# Recipe Format — Design Philosophy
+# Recipes in this format are split across three pages: You Will Need, Prep, and Cook. Content and presentation are fully separated — recipes are stored as YAML and rendered to PDF by a script that reads a style configuration file.
+# You Will Need lists ingredients at total quantities (if an ingredient is used in multiple steps, the shopping total appears here, not the per-step amounts) and optionally lists equipment.
+# Prep is an ordered sequence of actions, read top to bottom, that walks the cook through everything that needs to happen before cooking begins. It is not a static inventory. Steps are written in the imperative and lead with the vessel: "Into a small ramekin, measure the cumin seed." A vessel label appears as a header only when multiple consecutive steps happen in the same container. Single discrete actions (dicing a vegetable, measuring a solo ingredient) are plain steps with no vessel label. Preheating the oven is never in this section.
+# Cook is a sequence of numbered steps grouped under bold phase headers. The first phase is always Prepare and always includes preheating and any other setup actions. Any time the cook must wait for a specific duration, the action that follows the wait goes in a new step.
+# Ingredient ordering within a vessel follows this sequence: herbs, vegetables, aromatics, other animal products, meat/protein, cans/bottles/pantry. Within each category, order by quantity descending.
+# Split ingredients — if an ingredient is used in multiple steps at different amounts, list the total in You Will Need and list it separately in each prep or cook step where it appears.
+
+# Recipe Schema — every supported field with comments
+# All fields marked (optional) can be omitted
+
+title: Recipe Title
+subtitle: Serves 4 · ~45 min · Serve with crusty bread, garnish with parsley  # (optional)
+
+# ─── PAGE 1: INGREDIENTS & EQUIPMENT ─────────────────────────────────────────
+
+ingredients:
+  - Item name, quantity         # plain string, one item per line
+  - Item name, quantity
+  # Shopping list total quantities — if an ingredient is used in multiple
+  # steps, list the TOTAL amount here, not the per-step amount.
+
+equipment:                      # (optional) — omit if nothing special needed
+  - Two 8x8-inch baking pans
+  - Stand mixer
+
+# ─── PAGE 2: PREP ────────────────────────────────────────────────────
+# The prep page is an ORDERED SEQUENCE OF ACTIONS, top to bottom.
+# Vessel labels appear only when you are building something up across
+# multiple steps in one container. Single discrete actions are plain steps.
+#
+# Style rules:
+#   - Steps are imperative ("Dice the tomatoes", "Measure 2 cups stock")
+#   - Vessel steps describe what you DO, in order (zest, juice, measure, mix)
+#   - Slicing/dicing/prep of an ingredient happens here as an action step,
+#     not as a parenthetical on an ingredient name
+#   - Preheating the oven ALWAYS belongs in the Cook section, never here
+
+prep:
+  - step: Wash and dry all produce.       # top-level action, no vessel
+
+  - step: Zest both lemons into the mixing bowl.   # leads into a vessel group
+
+  - vessel: Large Mixing Bowl
+    steps:
+      - Into the bowl, juice one lemon.
+      - Into the bowl, add the olive oil (3 Tbsp), garlic paste, salt (1 tsp), and pepper. Whisk to combine.
+      - Add the chicken and toss to coat. Marinate at least 20 minutes.
+
+  - step: Slice the onion and pepper into bite-size pieces.   # back to top-level
+  - step: Dice the tomatoes.
+  - step: Measure 2 cups stock.
+
+# ─── PAGE 3: COOK ─────────────────────────────────────────────────────────────
+# Style rules:
+#   - The FIRST phase should always include preheating the oven (if applicable)
+#     and any other setup actions (heating a pan, etc.)
+#   - Steps are numbered continuously across all phases
+#   - Any time the cook must wait for a specific duration, the next action
+#     goes in a new step
+
+cook:
+  - phase: Prepare                    # always first; includes preheat
+    steps:
+      - Preheat oven to 375°F (190°C).
+
+  - phase: Phase Name                 # bold header
+    steps:
+      - First step text.
+      - Cook undisturbed for 5 minutes.   # time reference → its own step
+      - Next action after waiting.
+
+  - phase: Another Phase
+    steps:
+      - Step one.
+      - Step two.

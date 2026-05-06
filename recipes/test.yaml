@@ -1,0 +1,86 @@
+# test.yaml — exercises every schema feature
+# Not a real recipe. Used to verify rendering after schema or renderer changes.
+schema_version: 1
+
+title: Test Recipe
+subtitle: Makes 4 servings · Serve over Test Starch · Garnish with Test Herb
+
+# ── You Will Need ─────────────────────────────────────────────────────────────
+
+ingredients:
+  # Optional ingredient
+  - Test Herb (optional), 2 Tbsp
+  # Ingredient with no amount
+  - Test Paste
+  # Split ingredient — 1 cup used in prep, 1/2 cup used in cook (total: 1.5 cups)
+  - Test Liquid, 1.5 cups
+  # Normal ingredients
+  - Test Vegetable A, 2 large
+  - Test Vegetable B, 1 cup
+  - Test Aromatic, 3 cloves
+  - Test Protein, 1 lb
+  - Test Can, 14.5 oz
+  - Test Spice, 1 tsp
+  - Test Fat, 2 Tbsp
+
+equipment:
+  - Test Pan, large
+  - Test Bowl, medium
+  - Test Tool
+
+# ── Prep ─────────────────────────────────────────────────────────────
+
+prep:
+  # Top-level step before any vessel
+  - step: Wash and dry all test produce.
+
+  # Solo measurement — vessel-first
+  - step: Into a small ramekin, measure the test spice (1 tsp).
+
+  # Named vessel with multiple steps
+  - vessel: Large Test Bowl
+    steps:
+      - Into the bowl, add the test aromatic (3 cloves, minced) and test paste.
+      - Into the bowl, pour the test liquid (1 cup). Stir to combine.
+      - Add the test protein (1 lb, cut into bite-size pieces) and toss to coat.
+      - Marinate at least 20 minutes.
+
+  # Unnamed vessel — container doesn't matter, just the grouping
+  - vessel: ~
+    steps:
+      - Slice test vegetable A into bite-size pieces.
+      - Dice test vegetable B.
+
+  # Top-level steps after vessels
+  - step: Open the test can.
+  - step: If using test herb, roughly chop 2 Tbsp and set aside.
+
+# ── Cook ──────────────────────────────────────────────────────────────────────
+
+cook:
+  # Prepare phase always first, always includes preheat if applicable
+  - phase: Prepare
+    steps:
+      - Preheat oven to 375°F (190°C). Grease the test pan lightly.
+
+  - phase: First Cook Phase
+    steps:
+      - Heat the test fat in the test pan over medium-high heat.
+      - Add the test protein and cook undisturbed for 3-4 minutes.
+      - Flip and cook for another 3-4 minutes. Set aside.
+
+  - phase: Second Cook Phase
+    steps:
+      - Add the unnamed vessel vegetables to the pan and cook until softened, about 5 minutes.
+      - Add the test can and the remaining test liquid (1/2 cup). Stir to combine.
+      - Return the test protein to the pan.
+      - Cover and cook for 10-12 minutes.
+      - Uncover and stir in the test spice. Let the sauce thicken.
+
+  # Split ingredient appears again here at its second amount (1/2 cup above)
+
+  - phase: Finish
+    steps:
+      - Taste and adjust seasoning as needed.
+      - If using test herb, stir it in now.
+      - Serve over test starch.
