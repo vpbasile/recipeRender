@@ -1,4 +1,5 @@
-'# README
+# README
+
 ## Installation
 Create and activate a virtual environment, then install dependencies:
 python3 -m venv .venv
