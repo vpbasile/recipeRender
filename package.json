@@ -1,0 +1,13 @@
+{
+  "name": "recipe-render",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render:web": "node render_web.mjs"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}

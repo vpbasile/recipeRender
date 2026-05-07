@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Recipes</title><style>
+    :root {
+      --primary: #19171c;
+      --secondary: #484351;
+      --accent: #4b2a8d;
+      --light: #eeebf4;
+      --muted: #837a94;
+      --bg-top: #f9f7fd;
+      --bg-bottom: #e9e5f0;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: rgba(241, 239, 246, 0.55);
+      --border-soft: rgba(75, 42, 141, 0.12);
+      --border-strong: rgba(75, 42, 141, 0.16);
+      --shadow: rgba(39, 31, 55, 0.12);
+      --hero-glow: rgba(75, 42, 141, 0.18);
+      --title-font: Georgia, "Times New Roman", serif;
+      --heading-font: Arial, Helvetica, sans-serif;
+      --body-font: Arial, Helvetica, sans-serif;
+    }
+    :root[data-theme="dark"] {
+      --primary: #ebe8f3;
+      --secondary: #bfb4d5;
+      --accent: #b18aff;
+      --light: rgba(177, 138, 255, 0.1);
+      --muted: #977fc7;
+      --bg-top: #171320;
+      --bg-bottom: #0c0910;
+      --surface: rgba(23, 19, 32, 0.94);
+      --surface-strong: rgba(38, 31, 50, 0.84);
+      --border-soft: rgba(177, 138, 255, 0.18);
+      --border-strong: rgba(177, 138, 255, 0.24);
+      --shadow: rgba(0, 0, 0, 0.35);
+      --hero-glow: rgba(177, 138, 255, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 40px 20px 64px;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      color: var(--primary);
+      font-family: var(--body-font);
+      line-height: 1.5;
+      transition: background 180ms ease, color 180ms ease;
+    }
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px var(--shadow);
+      backdrop-filter: blur(8px);
+      transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+    .hero {
+      padding: 40px 40px 24px;
+      background:
+        radial-gradient(circle at top left, var(--hero-glow), transparent 34%),
+        linear-gradient(135deg, var(--surface-strong), var(--surface));
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .control-button {
+      appearance: none;
+      border: 1px solid var(--border-strong);
+      background: rgba(255, 255, 255, 0.32);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+    :root[data-theme="dark"] .control-button {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .control-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.48);
+    }
+    :root[data-theme="dark"] .control-button:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .control-button:disabled { opacity: 0.6; cursor: not-allowed; }
+    h1 {
+      margin: 0;
+      font-family: var(--title-font);
+      font-size: 2.4rem;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+    .content { padding: 32px 40px 40px; }
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .recipe-card {
+      display: block;
+      padding: 20px 22px;
+      background: var(--light);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      text-decoration: none;
+      color: var(--primary);
+      font-family: var(--heading-font);
+      font-size: 1.1rem;
+      transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+    }
+    .recipe-card:hover {
+      background: var(--surface-strong);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 640px) {
+      .hero-top { flex-direction: column; }
+      .controls { justify-content: flex-start; }
+      .hero, .content { padding-left: 20px; padding-right: 20px; }
+    }
+  </style></head><body><main class="shell"><header class="hero"><div class="hero-top"><h1>Recipes</h1><div class="controls"><button id="theme-toggle" class="control-button" type="button" aria-pressed="false">Dark mode</button><button id="wake-toggle" class="control-button" type="button" aria-pressed="false">Keep screen awake</button></div></div></header><div class="content"><div class="recipe-grid"><a class="recipe-card" href="brownies.html">Brownies Two Ways</a><a class="recipe-card" href="chanamasala.html">Chana Masala</a><a class="recipe-card" href="peanutstew.html">Chicken Peanut Stew</a><a class="recipe-card" href="test.html">Test Recipe</a></div></div></main><script>
+    (() => {
+      const root = document.documentElement;
+      const themeButton = document.getElementById('theme-toggle');
+      const wakeButton = document.getElementById('wake-toggle');
+      const themeStorageKey = 'recipe-render-theme';
+      let wakeLock = null;
+
+      function applyTheme(theme) {
+        root.dataset.theme = theme;
+        localStorage.setItem(themeStorageKey, theme);
+        if (themeButton) {
+          themeButton.textContent = theme === 'dark' ? 'Color mode: Dark' : 'Color mode: Light';
+          themeButton.setAttribute('aria-pressed', String(theme === 'dark'));
+        }
+      }
+
+      function updateWakeButton(active, supported) {
+        if (!wakeButton) return;
+        if (!supported) {
+          wakeButton.textContent = 'Keep awake unavailable';
+          wakeButton.disabled = true;
+          wakeButton.setAttribute('aria-disabled', 'true');
+          return;
+        }
+        wakeButton.disabled = false;
+        wakeButton.removeAttribute('aria-disabled');
+        wakeButton.textContent = active ? 'Keep screen awake: Off' : 'Keep screen awake: On';
+        wakeButton.setAttribute('aria-pressed', String(active));
+      }
+
+      async function requestWakeLock() {
+        if (!('wakeLock' in navigator) || !navigator.wakeLock?.request) {
+          updateWakeButton(false, false);
+          return;
+        }
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+          updateWakeButton(true, true);
+          wakeLock.addEventListener('release', () => { wakeLock = null; updateWakeButton(false, true); });
+        } catch { updateWakeButton(false, true); }
+      }
+
+      async function releaseWakeLock() {
+        if (!wakeLock) { updateWakeButton(false, 'wakeLock' in navigator); return; }
+        try { await wakeLock.release(); } finally { wakeLock = null; updateWakeButton(false, true); }
+      }
+
+      const storedTheme = localStorage.getItem(themeStorageKey);
+      const preferredTheme = storedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      applyTheme(preferredTheme);
+      updateWakeButton(false, 'wakeLock' in navigator && !!navigator.wakeLock?.request);
+
+      themeButton?.addEventListener('click', () => {
+        applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+      });
+
+      wakeButton?.addEventListener('click', async () => {
+        if (wakeLock) { await releaseWakeLock(); return; }
+        await requestWakeLock();
+      });
+
+      document.addEventListener('visibilitychange', async () => {
+        if (document.visibilityState === 'visible' && wakeLock) await requestWakeLock();
+      });
+    })();
+  </script></body></html>

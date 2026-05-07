@@ -18,7 +18,7 @@ from parser import parse, RecipeError
 from renderer import render
 
 
-def choose_recipe_path(base_dir):
+def choose_recipe_paths(base_dir):
     recipes_dir = os.path.join(base_dir, "recipes")
     if not os.path.isdir(recipes_dir):
         raise FileNotFoundError(f"Recipes directory not found: {recipes_dir}")
@@ -33,15 +33,18 @@ def choose_recipe_path(base_dir):
         raise FileNotFoundError(f"No recipe files found in: {recipes_dir}")
 
     print("Choose a recipe:")
+    print("  0) All recipes")
     for i, path in enumerate(recipe_files, start=1):
         print(f"  {i}) {os.path.basename(path)}")
 
     while True:
-        choice = input(f"Enter number (1-{len(recipe_files)}): ").strip()
+        choice = input(f"Enter number (0-{len(recipe_files)}): ").strip()
         if choice.isdigit():
             idx = int(choice)
+            if idx == 0:
+                return recipe_files
             if 1 <= idx <= len(recipe_files):
-                return recipe_files[idx - 1]
+                return [recipe_files[idx - 1]]
         print("Invalid selection. Try again.")
 
 
@@ -54,16 +57,13 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
     try:
-        recipe_path = choose_recipe_path(base_dir)
+        recipe_paths = choose_recipe_paths(base_dir)
     except (FileNotFoundError, OSError) as e:
         print(f"Error: {e}")
         sys.exit(1)
 
-    stem = os.path.splitext(os.path.basename(recipe_path))[0]
     output_dir = os.path.join(base_dir, "output")
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f"{stem}.pdf")
-
     style_path = os.path.join(base_dir, "style.yaml")
 
     try:
@@ -76,14 +76,18 @@ def main():
         print(f"Error: Could not parse style file:\n  {e}")
         sys.exit(1)
 
-    try:
-        recipe = parse(recipe_path)
-    except RecipeError as e:
-        print(f"Recipe error: {e}")
-        sys.exit(1)
+    for recipe_path in recipe_paths:
+        stem = os.path.splitext(os.path.basename(recipe_path))[0]
+        output_path = os.path.join(output_dir, f"{stem}.pdf")
 
-    render(recipe, output_path, st)
-    print(f"PDF written to: {output_path}")
+        try:
+            recipe = parse(recipe_path)
+        except RecipeError as e:
+            print(f"Recipe error: {e}")
+            sys.exit(1)
+
+        render(recipe, output_path, st)
+        print(f"PDF written to: {output_path}")
 
 
 if __name__ == "__main__":

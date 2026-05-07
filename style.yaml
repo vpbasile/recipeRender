@@ -42,6 +42,39 @@ spacing:
   between_ingredients: 3
   rule_thickness: 0.75    # points
 
+web:
+  theme_hue: 260
+  light:
+    bg_top: "#f9f7fd"
+    bg_bottom: "#e9e5f0"
+    surface: "rgba(255, 255, 255, 0.92)"
+    surface_strong: "rgba(241, 239, 246, 0.55)"
+    border_soft: "rgba(75, 42, 141, 0.12)"
+    border_strong: "rgba(75, 42, 141, 0.16)"
+    shadow: "rgba(39, 31, 55, 0.12)"
+    card_alt: "white"
+    hero_glow: "rgba(75, 42, 141, 0.18)"
+    primary: "#19171c"
+    secondary: "#484351"
+    accent: "#4b2a8d"
+    light: "#eeebf4"
+    muted: "#837a94"
+  dark:
+    bg_top: "#171320"
+    bg_bottom: "#0c0910"
+    surface: "rgba(23, 19, 32, 0.94)"
+    surface_strong: "rgba(38, 31, 50, 0.84)"
+    border_soft: "rgba(177, 138, 255, 0.18)"
+    border_strong: "rgba(177, 138, 255, 0.24)"
+    shadow: "rgba(0, 0, 0, 0.35)"
+    card_alt: "rgba(17, 14, 22, 0.95)"
+    hero_glow: "rgba(177, 138, 255, 0.18)"
+    primary: "#ebe8f3"
+    secondary: "#bfb4d5"
+    accent: "#b18aff"
+    light: "rgba(177, 138, 255, 0.1)"
+    muted: "#977fc7"
+
 decorations:
   show_rule_under_title: true
   show_rule_under_page_heading: true

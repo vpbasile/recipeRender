@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VENV_PY="$ROOT_DIR/.venv/bin/python"
+NODE_BIN="$(command -v node || true)"
 
 if [[ ! -x "$VENV_PY" ]]; then
   echo "Error: .venv not found. Create it with: python3 -m venv .venv" >&2
@@ -15,4 +16,28 @@ if [[ $# -gt 0 ]]; then
   exit 1
 fi
 
-"$VENV_PY" "$ROOT_DIR/render.py"
+echo "Choose an output format:"
+echo "  1) PDF"
+echo "  2) Web page"
+
+while true; do
+  read -r -p "Enter number (1-2): " choice
+  case "$choice" in
+    1)
+      "$VENV_PY" "$ROOT_DIR/render.py"
+      break
+      ;;
+    2)
+      if [[ -z "$NODE_BIN" ]]; then
+        echo "Error: node is required for web generation but was not found on PATH." >&2
+        echo "Install node to proceed." >&2
+        exit 1
+      fi
+      "$NODE_BIN" "$ROOT_DIR/render_web.mjs"
+      break
+      ;;
+    *)
+      echo "Invalid selection. Try again." >&2
+      ;;
+  esac
+done
