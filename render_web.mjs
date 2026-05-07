@@ -13,7 +13,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const OUTPUT_DIR = path.join(__dirname, 'html');
+const OUTPUT_DIR = path.join(__dirname, 'docs');
 const RECIPES_DIR = path.join(__dirname, 'recipes');
 const STYLE_PATH = path.join(__dirname, 'style.yaml');
 const PYTHON_BIN = path.join(__dirname, '.venv', 'bin', 'python');
