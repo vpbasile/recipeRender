@@ -1,0 +1,109 @@
+# TODO: Measuring is a step, so measurements need to be listed when an ingredient will realistically be measured.  When adding things to a vessel, like in the brownie recipe, that's a good time to measure.
+
+# Recipe Format — Design Philosophy
+# Recipes in this format are split across up to three pages: You Will Need, Prep (optional), and Cook. Content and presentation are fully separated — recipes are stored as YAML and rendered to PDF by a script that reads a style configuration file.
+# You Will Need lists ingredients at total quantities (if an ingredient is used in multiple steps, the shopping total appears here, not the per-step amounts) and optionally lists equipment.
+#
+# Prep is OPTIONAL and author-controlled. Include it only for work that is done ahead of, or separately from, the active cook flow — things like marinating, extensive chopping/measuring done in advance, or a component built in its own vessel before cooking starts. Prep is not a catch-all for "anything that isn't the oven/stovetop" — if ingredient work happens as part of getting the dish cooking (e.g. mixing a batter while the oven preheats), that work belongs on the Cook page as its own phase, not on Prep. The test is not "does this happen before heat is applied" but "does this need to be done separately/ahead, or would it naturally happen as part of the active cook flow." When included, Prep is an ordered sequence of actions, read top to bottom. Steps may be imperative ("Into a small ramekin, measure the cumin seed") or non-imperative bare ingredient placements ("Olive oil (3 Tbsp)"). A vessel label appears as a header only when multiple prepped ingredients can be placed in the same container. Listing an ingredient under a vessel header means placing that ingredient into that vessel — no "into the bowl, add..." phrasing is required for each item. Single discrete actions (dicing a vegetable, measuring a solo ingredient) are plain steps with no vessel label. Preheating the oven is never a setup action and never appears in this section.
+#
+# Cook is a sequence of numbered steps grouped under bold phase headers. Preheating the oven is never bundled into another phase — if the oven needs to preheat, it appears as its own phase, "Preheat oven," which is optional and always appears first when used. Any time the cook must wait for a specific duration, the action that follows the wait goes in a new step. Cook phases can include work like mixing a batter, building a dish, or assembling components — not just heat-application steps — whenever that work is meant to happen as part of the active cooking flow (for example, while something else is preheating or simmering) rather than ahead of time.
+#
+# Vessel grouping is a formatting tool, not a Prep-page exclusive. A phase's steps can include the same vessel blocks used on the Prep page (a vessel label followed by its own steps/placements) whenever measuring ingredients into separate containers makes the recipe easier to follow — e.g. "while the oven preheats, measure the sugar into a large bowl, the cocoa/baking powder/salt into a small bowl, and the flour/mix-ins into a medium bowl." Which page a step lives on is about timing (ahead of time vs. part of the active flow); vessel grouping is about how the ingredients are physically organized, and the two are independent choices an author makes separately.
+#
+# Ingredient ordering within a vessel follows this sequence: herbs, vegetables and fruits, aromatics, other animal products, meat/protein, cans/bottles/pantry (salt, pepper, and other spices are pantry items). Within each category, order by quantity descending. This rule applies to any vessel, whether it appears on the Prep page or inside a Cook phase.
+# Split ingredients — if an ingredient is used in multiple steps at different amounts, list the total in You Will Need and list it separately in each prep or cook step where it appears.
+
+# Recipe Schema — every supported field with comments
+# All fields marked (optional) can be omitted
+
+title: Recipe Title
+subtitle: Serves 4 · ~45 min · Serve with crusty bread, garnish with parsley  # (optional)
+
+# ─── PAGE 1: INGREDIENTS & EQUIPMENT ─────────────────────────────────────────
+
+ingredients:
+  - Item name, quantity         # plain string, one item per line
+  - Item name, quantity
+  # Shopping list total quantities — if an ingredient is used in multiple
+  # steps, list the TOTAL amount here, not the per-step amount.
+
+equipment:                      # (optional) — omit if nothing special needed
+  - Two 8x8-inch baking pans
+  - Stand mixer
+
+# ─── PAGE 2: PREP (optional — omit the whole section if not needed) ─────────
+# Include Prep only when work must happen ahead of, or separately from, the
+# active cook flow: marinating, heavy advance chopping/measuring, a
+# component built in its own vessel before cooking starts. If the
+# ingredient work is meant to happen WHILE the cook flow is already active
+# (e.g. mixing a batter during oven preheat), put it on the Cook page as
+# its own phase instead — do not default it here just because it isn't a
+# heat-application step.
+#
+# Style rules (when Prep is used):
+#   - Steps may be imperative ("Dice the tomatoes", "Measure 2 cups stock")
+#     or non-imperative bare ingredient placements ("Olive oil (3 Tbsp)").
+#   - When things can share a vessel (don't need to be kept separate until
+#     a specific step) the steps are grouped under that vessel's header.
+#     Listing an ingredient under a vessel means placing it into that vessel.
+#   - Within a vessel, ingredients follow the ordering rule above: herbs,
+#     vegetables and fruits, aromatics, other animal products, meat/protein,
+#     cans/bottles/pantry (salt/pepper/spices count as pantry). Order by
+#     quantity descending within each category.
+#   - Slicing/dicing/prep of an ingredient happens here as its own action
+#     step, not as a parenthetical on an ingredient name.
+#   - Preheating the oven ALWAYS belongs in the Cook section, never here.
+
+prep:
+  - step: Wash and dry all produce.       # top-level action, no vessel
+
+  - vessel: Large Mixing Bowl
+    steps:
+      - Zest of both lemons
+      - Juice of one lemon.
+      - Garlic paste
+      - Olive oil (3 Tbsp)
+      - Salt (1 tsp)
+      - Pepper
+      - Whisk to combine.
+      - Add the chicken and toss to coat. Marinate at least 20 minutes.
+
+  - step: Slice the onion and pepper into bite-size pieces.   # back to top-level
+  - step: Dice the tomatoes.
+  - step: Measure 2 cups stock.
+
+# ─── PAGE 3: COOK ─────────────────────────────────────────────────────────────
+# Style rules:
+#   - Preheating the oven is never bundled into another phase. If the oven
+#     needs to preheat, it appears as its own optional phase, "Preheat oven,"
+#     which always appears first in this section when used.
+#   - Steps are numbered continuously across all phases.
+#   - Any time the cook must wait for a specific duration, the next action
+#     goes in a new step.
+#   - A phase isn't limited to heat-application steps — mixing, assembling,
+#     or building a dish belongs here (not on Prep) whenever it's meant to
+#     happen as part of the active cook flow, e.g. concurrently with a
+#     preheat or a simmer.
+#   - A phase's steps list may include vessel blocks, same syntax and
+#     ordering rule as on the Prep page, whenever grouping ingredients into
+#     separate containers aids the flow (see example below).
+
+cook:
+  - phase: Preheat oven                    # optional; always first if present
+    steps:
+      - Preheat to 375°F (190°C).
+
+  - phase: Phase Name                 # bold header
+    steps:
+      - First step text.
+      - vessel: Small Bowl              # vessel block inside a Cook phase
+        steps:
+          - Baking powder
+          - Salt
+      - Cook undisturbed for 5 minutes.   # time reference → its own step
+      - Next action after waiting.
+
+  - phase: Another Phase
+    steps:
+      - Step one.
+      - Step two.

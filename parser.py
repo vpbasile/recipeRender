@@ -125,12 +125,6 @@ def _parse_prep(raw_prep):
 def _parse_cook(raw_cook):
     if not isinstance(raw_cook, list) or len(raw_cook) == 0:
         raise RecipeError("'cook' must be a non-empty list.")
-    first = raw_cook[0]
-    if not isinstance(first, dict) or first.get("phase", "").strip().lower() != "prepare":
-        raise RecipeError(
-            "The first cook phase must be named 'Prepare'. "
-            "It should include preheating and any setup actions."
-        )
     result = []
     for i, entry in enumerate(raw_cook):
         ctx = f"cook phase {i + 1}"
@@ -143,9 +137,41 @@ def _parse_cook(raw_cook):
         steps = _require_list(entry, "steps", ctx)
         parsed_steps = []
         for j, s in enumerate(steps):
-            if not isinstance(s, str) or not s.strip():
-                raise RecipeError(f"{ctx}, step {j + 1}: must be a non-empty string.")
-            parsed_steps.append(s.strip())
+            step_ctx = f"{ctx}, step {j + 1}"
+            if isinstance(s, str):
+                if not s.strip():
+                    raise RecipeError(f"{step_ctx}: must be a non-empty string.")
+                parsed_steps.append(s.strip())
+                continue
+
+            if isinstance(s, dict):
+                _check_no_unknown_keys(s, {"vessel", "steps"}, step_ctx)
+                if "vessel" not in s:
+                    raise RecipeError(
+                        f"{step_ctx}: mapping step must define 'vessel'."
+                    )
+                vessel_name = s["vessel"]
+                if vessel_name is not None and not isinstance(vessel_name, str):
+                    raise RecipeError(
+                        f"{step_ctx}: 'vessel' must be a string or ~ (unnamed)."
+                    )
+                vessel_steps = _require_list(s, "steps", step_ctx)
+                parsed_vessel_steps = []
+                for k, vs in enumerate(vessel_steps):
+                    if not isinstance(vs, str) or not vs.strip():
+                        raise RecipeError(
+                            f"{step_ctx}, vessel step {k + 1}: must be a non-empty string."
+                        )
+                    parsed_vessel_steps.append(vs.strip())
+                parsed_steps.append(VesselGroup(
+                    name=vessel_name.strip() if isinstance(vessel_name, str) else None,
+                    steps=parsed_vessel_steps,
+                ))
+                continue
+
+            raise RecipeError(
+                f"{step_ctx}: must be a non-empty string or a vessel mapping."
+            )
         result.append(CookPhase(name=name.strip(), steps=parsed_steps))
     return result
 
@@ -176,7 +202,8 @@ def parse(path):
     subtitle    = raw.get("subtitle")
     ingredients = _require_list(raw, "ingredients", "recipe root")
     equipment   = raw.get("equipment") or []
-    prep        = _parse_prep(_require_list(raw, "prep", "recipe root"))
+    raw_prep    = raw.get("prep", [])
+    prep        = _parse_prep(raw_prep if raw_prep is not None else [])
     cook        = _parse_cook(_require_list(raw, "cook", "recipe root"))
 
     if not isinstance(title, str) or not title.strip():

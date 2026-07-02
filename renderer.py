@@ -150,11 +150,22 @@ def _build_cook(recipe, st, styles):
     for phase in recipe.cook:
         story += [Paragraph(phase.name, styles["phase_heading"]), Spacer(1, sp["after_phase"])]
         for step in phase.steps:
-            story += [
-                Paragraph(f"<b>{step_num}.</b>  {step}", styles["step"]),
-                Spacer(1, sp["between_steps"]),
-            ]
-            step_num += 1
+            if isinstance(step, str):
+                story += [
+                    Paragraph(f"<b>{step_num}.</b>  {step}", styles["step"]),
+                    Spacer(1, sp["between_steps"]),
+                ]
+                step_num += 1
+            elif isinstance(step, VesselGroup):
+                if step.name:
+                    story += [Spacer(1, 4), Paragraph(f"In a {step.name}", styles["vessel_label"])]
+                for vstep in step.steps:
+                    story += [
+                        Paragraph(f"<b>{step_num}.</b>  {vstep}", styles["step"]),
+                        Spacer(1, sp["between_steps"]),
+                    ]
+                    step_num += 1
+                story.append(Spacer(1, sp["after_vessel"] - sp["between_steps"]))
         story.append(Spacer(1, sp["after_vessel"]))
 
     return story
@@ -177,12 +188,13 @@ def render(recipe, output_path, st):
         title=recipe.title,
     )
 
-    story = (
-        _build_you_will_need(recipe, st, styles)
-        + [PageBreak()]
-        + _build_mise_en_place(recipe, st, styles)
-        + [PageBreak()]
-        + _build_cook(recipe, st, styles)
-    )
+    story = _build_you_will_need(recipe, st, styles)
+    story.append(PageBreak())
+
+    if recipe.prep:
+        story += _build_mise_en_place(recipe, st, styles)
+        story.append(PageBreak())
+
+    story += _build_cook(recipe, st, styles)
 
     doc.build(story)

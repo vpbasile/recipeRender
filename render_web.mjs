@@ -89,11 +89,34 @@ async function loadStyle() {
 }
 
 function splitPrep(prep) {
+  if (!Array.isArray(prep)) {
+    return [];
+  }
   return prep.map((entry) => {
     if (entry.text) {
       return { type: 'step', text: entry.text };
     }
     return { type: 'vessel', name: entry.name, steps: entry.steps };
+  });
+}
+
+function splitCook(cook) {
+  if (!Array.isArray(cook)) {
+    return [];
+  }
+  return cook.map((phase) => {
+    const rawSteps = Array.isArray(phase.steps) ? phase.steps : [];
+    const steps = rawSteps.map((step) => {
+      if (typeof step === 'string') {
+        return { type: 'step', text: step };
+      }
+      return {
+        type: 'vessel',
+        name: step?.name,
+        steps: Array.isArray(step?.steps) ? step.steps : [],
+      };
+    });
+    return { name: phase.name, steps };
   });
 }
 
@@ -103,7 +126,9 @@ function HtmlDocument({ recipe, style }) {
   const headingFont = fontStack(style.fonts.heading);
   const labelFont = fontStack(style.fonts.label);
   const prepEntries = splitPrep(recipe.prep);
+  const cookPhases = splitCook(recipe.cook);
   const bullet = style.decorations.step_bullet;
+  let cookStepNumber = 0;
   const script = `
     (() => {
       const root = document.documentElement;
@@ -471,32 +496,49 @@ function HtmlDocument({ recipe, style }) {
           React.createElement(
             'section',
             { className: 'content' },
-            React.createElement('h2', { className: 'page-title' }, 'Prep'),
-            React.createElement('div', { className: 'step-list' },
-              prepEntries.flatMap((entry, index) => {
-                if (entry.type === 'step') {
-                  return React.createElement('div', { className: 'step-item', key: `prep-step-${index}` }, `${bullet} ${entry.text}`);
-                }
-                const nodes = [];
-                if (entry.name) {
-                  nodes.push(React.createElement('div', { className: 'vessel-label', key: `vessel-${index}` }, `In a ${entry.name}`));
-                }
-                entry.steps.forEach((step, stepIndex) => {
-                  nodes.push(React.createElement('div', { className: 'step-item', key: `vessel-step-${index}-${stepIndex}` }, `${bullet} ${step}`));
-                });
-                return nodes;
-              }),
-            ),
-            React.createElement('h2', { className: 'page-title', style: { marginTop: '28px' } }, 'Cook'),
-            recipe.cook.map((phase, phaseIndex) => React.createElement('section', { className: 'page-block', key: `phase-${phaseIndex}` },
+            prepEntries.length > 0 ? React.createElement(React.Fragment, null,
+              React.createElement('h2', { className: 'page-title' }, 'Prep'),
+              React.createElement('div', { className: 'step-list' },
+                prepEntries.flatMap((entry, index) => {
+                  if (entry.type === 'step') {
+                    return React.createElement('div', { className: 'step-item', key: `prep-step-${index}` }, `${bullet} ${entry.text}`);
+                  }
+                  const nodes = [];
+                  if (entry.name) {
+                    nodes.push(React.createElement('div', { className: 'vessel-label', key: `vessel-${index}` }, `In a ${entry.name}`));
+                  }
+                  entry.steps.forEach((step, stepIndex) => {
+                    nodes.push(React.createElement('div', { className: 'step-item', key: `vessel-step-${index}-${stepIndex}` }, `${bullet} ${step}`));
+                  });
+                  return nodes;
+                }),
+              ),
+            ) : null,
+            React.createElement('h2', { className: 'page-title', style: { marginTop: prepEntries.length > 0 ? '28px' : 0 } }, 'Cook'),
+            cookPhases.map((phase, phaseIndex) => React.createElement('section', { className: 'page-block', key: `phase-${phaseIndex}` },
               React.createElement('h3', { className: 'phase-title' }, phase.name),
               React.createElement('div', { className: 'step-list' },
-                phase.steps.map((step, stepIndex) => {
-                  const number = recipe.cook.slice(0, phaseIndex).reduce((count, item) => count + item.steps.length, 0) + stepIndex + 1;
-                  return React.createElement('div', { className: 'step-item cook-step', key: `cook-step-${phaseIndex}-${stepIndex}` },
-                    React.createElement('strong', null, `${number}.`),
-                    step,
-                  );
+                phase.steps.flatMap((step, stepIndex) => {
+                  if (step.type === 'step') {
+                    cookStepNumber += 1;
+                    return React.createElement('div', { className: 'step-item cook-step', key: `cook-step-${phaseIndex}-${stepIndex}` },
+                      React.createElement('strong', null, `${cookStepNumber}.`),
+                      step.text,
+                    );
+                  }
+
+                  const nodes = [];
+                  if (step.name) {
+                    nodes.push(React.createElement('div', { className: 'vessel-label', key: `cook-vessel-${phaseIndex}-${stepIndex}` }, `In a ${step.name}`));
+                  }
+                  step.steps.forEach((vesselStep, vesselStepIndex) => {
+                    cookStepNumber += 1;
+                    nodes.push(React.createElement('div', { className: 'step-item cook-step', key: `cook-vessel-step-${phaseIndex}-${stepIndex}-${vesselStepIndex}` },
+                      React.createElement('strong', null, `${cookStepNumber}.`),
+                      vesselStep,
+                    ));
+                  });
+                  return nodes;
                 }),
               ),
             )),
