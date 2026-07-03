@@ -134,7 +134,18 @@ def _parse_cook(raw_cook):
         name = _require(entry, "phase", ctx)
         if not isinstance(name, str) or not name.strip():
             raise RecipeError(f"{ctx}: 'phase' must be a non-empty string.")
-        steps = _require_list(entry, "steps", ctx)
+        steps = entry.get("steps")
+        if steps is None:
+            compact_parts = [part.strip() for part in name.split(" - ")]
+            compact_parts = [part for part in compact_parts if part]
+            if len(compact_parts) > 1:
+                name = compact_parts[0]
+                steps = compact_parts[1:]
+            else:
+                raise RecipeError(f"Missing required field 'steps' in {ctx}.")
+        elif not isinstance(steps, list) or len(steps) == 0:
+            raise RecipeError(f"'steps' in {ctx} must be a non-empty list.")
+
         parsed_steps = []
         for j, s in enumerate(steps):
             step_ctx = f"{ctx}, step {j + 1}"

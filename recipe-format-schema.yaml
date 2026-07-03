@@ -87,6 +87,11 @@ prep:
 #   - A phase's steps list may include vessel blocks, same syntax and
 #     ordering rule as on the Prep page, whenever grouping ingredients into
 #     separate containers aids the flow (see example below).
+#   - Preferred syntax is an explicit `steps:` list. As a compatibility
+#     fallback, if `steps:` is omitted and the `phase:` value folds in
+#     additional `- Step text` lines, the parser will treat the first segment
+#     as the phase name and the remaining dash-separated segments as steps.
+#     Use this only when needed; the explicit `steps:` form is clearer.
 
 cook:
   - phase: Preheat oven                    # optional; always first if present
@@ -101,6 +106,12 @@ cook:
           - Baking powder
           - Salt
       - Cook undisturbed for 5 minutes.   # time reference → its own step
+      - Next action after waiting.
+
+  # Compact fallback accepted by the parser, but less clear than `steps:`
+  - phase: >
+      Phase Name
+      - First step text.
       - Next action after waiting.
 
   - phase: Another Phase

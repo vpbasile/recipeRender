@@ -4,16 +4,16 @@ subtitle: One 9" x 13" pan · Bake 28–30 min
 # ─── PAGE 1: INGREDIENTS & EQUIPMENT ─────────────────────────────────────────
 
 ingredients:
-  - Granulated sugar, 2 1/4 cups (447g)
-  - Dutch-process cocoa, 1 1/4 cups (106g)
-  - Baking powder, 1 teaspoon
+  - Granulated sugar
+  - Dutch-process cocoa
+  - Baking powder
   - Salt, 1/2 tsp (omit if using salted butter)
-  - All-purpose flour, 1 1/2 cups (180g)
-  - Chopped walnuts or pecans and/or chocolate chips, 2 cups total (optional)
+  - All-purpose flour
+  - (optional) Mix-ins like chopped walnuts or pecans and/or chocolate chips, 2 cups total
   - Large eggs, 5
-  - Water, 1/2 cup (113g)
+  - Water
   - Salted butter, 2 sticks
-  - Vanilla extract, 1 tablespoon (14g)
+  - Vanilla extract
 
 equipment:
   - 9" x 13" pan
@@ -32,27 +32,31 @@ cook:
     steps:
       - Preheat to 350°F (177°C).
 
-  - phase: Make the Batter
+  - phase: Measure everything
     steps:
       - Grease the pan.
-      - vessel: Large Bowl
+      - vessel: "In a large bowl, measure:"
         steps:
-          - Granulated sugar
-      - vessel: Small Bowl
+          - Granulated sugar - 2 1/4 cups (447g)
+      - vessel: "In a small bowl, measure: "
         steps:
-          - Dutch-process cocoa
-          - Baking powder
-          - Salt
-      - vessel: Medium Bowl
+          - Dutch-process cocoa - 1 1/4 cups (106g)
+          - Baking powder - 1 teaspoon
+          - (if using unsalted butter) Salt - 1/2 teaspoon
+      - vessel: "In a medium bowl, measure:"
         steps:
-          - All-purpose flour
-          - Walnuts, pecans, and/or chocolate chips (2 cups total)
-      - Melt the butter.
+          - All-purpose flour - 1 1/2 cups (180g)
+          - Mixins - 2 cups total
+          - Toss the mix-ins in the flour to coat
+      - Measure 1/2 cup water
+
+  - phase: Make the Batter
+      - Melt the two sticks of butter.
       - Combine the melted butter and sugar in the large bowl, stirring until smooth.
-      - Stir in the small bowl's cocoa mixture and the vanilla extract.
+      - Stir in the cocoa mixture and 1 TBPSP vanilla extract.
       - Beat in the eggs one at a time.
       - Scrape the bowl, then stir in the water until smooth.
-      - Toss the mix-ins in the medium bowl's flour to coat, then stir them into the batter until thoroughly combined.
+      - Stir theflour mixture into the batter until thoroughly combined.
       - Spoon the batter into the prepared pan.
 
   - phase: Bake
