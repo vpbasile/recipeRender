@@ -64,7 +64,7 @@ p.vessel-name {
 """
 
 
-def choose_recipe_paths(base_dir):
+def choose_recipe_paths(base_dir, choose_all=False):
     recipes_dir = os.path.join(base_dir, "recipes")
     if not os.path.isdir(recipes_dir):
         raise FileNotFoundError(f"Recipes directory not found: {recipes_dir}")
@@ -74,14 +74,21 @@ def choose_recipe_paths(base_dir):
         for name in os.listdir(recipes_dir)
         if name.lower().endswith((".yaml", ".yml"))
     ])
+    bundle_recipe_files = [
+      path for path in recipe_files
+      if os.path.basename(path).lower() != "test.yaml"
+    ]
 
     if not recipe_files:
         raise FileNotFoundError(f"No recipe files found in: {recipes_dir}")
 
+    if choose_all:
+      return bundle_recipe_files
+
     print("Choose a recipe:")
     print("  0) All recipes")
     for i, path in enumerate(recipe_files, start=1):
-        print(f"  {i}) {os.path.basename(path)}")
+      print(f"  {i}) {os.path.basename(path)}")
 
     while True:
         choice = input(f"Enter number (0-{len(recipe_files)}): ").strip()
@@ -176,7 +183,11 @@ def build_recipe_xhtml(recipe):
 """
 
 
-def build_nav_xhtml(recipe):
+def build_nav_xhtml(recipes):
+    items = "".join(
+        f'<li><a href="{escape(filename)}">{escape(recipe.title)}</a></li>'
+        for filename, recipe in recipes
+    )
     return f"""<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\" lang=\"en\">
   <head>
@@ -185,31 +196,41 @@ def build_nav_xhtml(recipe):
   <body>
     <nav epub:type=\"toc\" id=\"toc\">
       <h1>Contents</h1>
-      <ol>
-        <li><a href=\"recipe.xhtml\">{escape(recipe.title)}</a></li>
-      </ol>
+      <ol>{items}</ol>
     </nav>
   </body>
 </html>
 """
 
 
-def build_content_opf(recipe, book_id):
+def build_content_opf(book_title, recipes, book_id):
+    manifest_items = [
+        '    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>',
+        '    <item id="styles" href="styles.css" media-type="text/css"/>',
+    ]
+    spine_items = ['    <itemref idref="nav"/>']
+
+    for index, (filename, _recipe) in enumerate(recipes, start=1):
+        manifest_items.append(
+            f'    <item id="recipe-{index}" href="{escape(filename)}" media-type="application/xhtml+xml"/>'
+        )
+        spine_items.append(f'    <itemref idref="recipe-{index}"/>')
+
+    manifest = "\n".join(manifest_items)
+    spine = "\n".join(spine_items)
+
     return f"""<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"bookid\">
   <metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">
     <dc:identifier id=\"bookid\">urn:uuid:{book_id}</dc:identifier>
-    <dc:title>{escape(recipe.title)}</dc:title>
+    <dc:title>{escape(book_title)}</dc:title>
     <dc:language>en</dc:language>
   </metadata>
   <manifest>
-    <item id=\"nav\" href=\"nav.xhtml\" media-type=\"application/xhtml+xml\" properties=\"nav\"/>
-    <item id=\"recipe\" href=\"recipe.xhtml\" media-type=\"application/xhtml+xml\"/>
-    <item id=\"styles\" href=\"styles.css\" media-type=\"text/css\"/>
+{manifest}
   </manifest>
   <spine>
-    <itemref idref=\"nav\"/>
-    <itemref idref=\"recipe\"/>
+{spine}
   </spine>
 </package>
 """
@@ -217,9 +238,10 @@ def build_content_opf(recipe, book_id):
 
 def write_epub(recipe, output_path):
     book_id = uuid.uuid4()
+    recipe_filename = "recipe.xhtml"
     recipe_xhtml = build_recipe_xhtml(recipe)
-    nav_xhtml = build_nav_xhtml(recipe)
-    content_opf = build_content_opf(recipe, book_id)
+    nav_xhtml = build_nav_xhtml([(recipe_filename, recipe)])
+    content_opf = build_content_opf(recipe.title, [(recipe_filename, recipe)], book_id)
     container_xml = """<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">
   <rootfiles>
@@ -233,20 +255,50 @@ def write_epub(recipe, output_path):
         epub.writestr("META-INF/container.xml", container_xml, compress_type=ZIP_DEFLATED)
         epub.writestr("OEBPS/content.opf", content_opf, compress_type=ZIP_DEFLATED)
         epub.writestr("OEBPS/nav.xhtml", nav_xhtml, compress_type=ZIP_DEFLATED)
-        epub.writestr("OEBPS/recipe.xhtml", recipe_xhtml, compress_type=ZIP_DEFLATED)
+        epub.writestr(f"OEBPS/{recipe_filename}", recipe_xhtml, compress_type=ZIP_DEFLATED)
         epub.writestr("OEBPS/styles.css", EPUB_STYLE, compress_type=ZIP_DEFLATED)
 
 
+def write_indexed_epub(recipes, output_path):
+    book_id = uuid.uuid4()
+    bundled_recipes = []
+    for recipe_path, recipe in recipes:
+        stem = os.path.splitext(os.path.basename(recipe_path))[0]
+        bundled_recipes.append((f"recipe-{stem}.xhtml", recipe))
+
+    nav_xhtml = build_nav_xhtml(bundled_recipes)
+    content_opf = build_content_opf("Recipe Collection", bundled_recipes, book_id)
+    container_xml = """<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<container version=\"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\">
+  <rootfiles>
+    <rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/>
+  </rootfiles>
+</container>
+"""
+
+    with ZipFile(output_path, "w") as epub:
+        epub.writestr("mimetype", "application/epub+zip", compress_type=ZIP_STORED)
+        epub.writestr("META-INF/container.xml", container_xml, compress_type=ZIP_DEFLATED)
+        epub.writestr("OEBPS/content.opf", content_opf, compress_type=ZIP_DEFLATED)
+        epub.writestr("OEBPS/nav.xhtml", nav_xhtml, compress_type=ZIP_DEFLATED)
+        epub.writestr("OEBPS/styles.css", EPUB_STYLE, compress_type=ZIP_DEFLATED)
+        for filename, recipe in bundled_recipes:
+            epub.writestr(f"OEBPS/{filename}", build_recipe_xhtml(recipe), compress_type=ZIP_DEFLATED)
+
+
 def main():
-    if len(sys.argv) > 1:
+    choose_all = False
+    if len(sys.argv) == 2 and sys.argv[1] == "--all":
+        choose_all = True
+    elif len(sys.argv) > 1:
         print("Error: command-line recipe arguments are no longer supported.")
-        print("Run python render_epub.py and choose from the menu.")
+        print("Run python render_epub.py and choose from the menu, or use --all.")
         sys.exit(1)
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
     try:
-        recipe_paths = choose_recipe_paths(base_dir)
+        recipe_paths = choose_recipe_paths(base_dir, choose_all=choose_all)
     except (FileNotFoundError, OSError) as error:
         print(f"Error: {error}")
         sys.exit(1)
@@ -254,15 +306,23 @@ def main():
     output_dir = os.path.join(base_dir, "output")
     os.makedirs(output_dir, exist_ok=True)
 
+    parsed_recipes = []
     for recipe_path in recipe_paths:
+      try:
+        parsed_recipes.append((recipe_path, parse(recipe_path)))
+      except RecipeError as error:
+        print(f"Recipe error: {error}")
+        sys.exit(1)
+
+    if choose_all:
+      output_path = os.path.join(output_dir, "recipes.epub")
+      write_indexed_epub(parsed_recipes, output_path)
+      print(f"EPUB written to: {output_path}")
+      return
+
+    for recipe_path, recipe in parsed_recipes:
         stem = os.path.splitext(os.path.basename(recipe_path))[0]
         output_path = os.path.join(output_dir, f"{stem}.epub")
-
-        try:
-            recipe = parse(recipe_path)
-        except RecipeError as error:
-            print(f"Recipe error: {error}")
-            sys.exit(1)
 
         write_epub(recipe, output_path)
         print(f"EPUB written to: {output_path}")

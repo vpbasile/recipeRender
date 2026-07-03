@@ -18,7 +18,7 @@ from parser import parse, RecipeError
 from renderer import render
 
 
-def choose_recipe_paths(base_dir):
+def choose_recipe_paths(base_dir, choose_all=False):
     recipes_dir = os.path.join(base_dir, "recipes")
     if not os.path.isdir(recipes_dir):
         raise FileNotFoundError(f"Recipes directory not found: {recipes_dir}")
@@ -28,9 +28,16 @@ def choose_recipe_paths(base_dir):
         for name in os.listdir(recipes_dir)
         if name.lower().endswith((".yaml", ".yml"))
     ])
+    bundle_recipe_files = [
+        path for path in recipe_files
+        if os.path.basename(path).lower() != "test.yaml"
+    ]
 
     if not recipe_files:
         raise FileNotFoundError(f"No recipe files found in: {recipes_dir}")
+
+    if choose_all:
+        return bundle_recipe_files
 
     print("Choose a recipe:")
     print("  0) All recipes")
@@ -49,15 +56,18 @@ def choose_recipe_paths(base_dir):
 
 
 def main():
-    if len(sys.argv) > 1:
+    choose_all = False
+    if len(sys.argv) == 2 and sys.argv[1] == "--all":
+        choose_all = True
+    elif len(sys.argv) > 1:
         print("Error: command-line recipe arguments are no longer supported.")
-        print("Run python render.py and choose from the menu.")
+        print("Run python render.py and choose from the menu, or use --all.")
         sys.exit(1)
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
 
     try:
-        recipe_paths = choose_recipe_paths(base_dir)
+        recipe_paths = choose_recipe_paths(base_dir, choose_all=choose_all)
     except (FileNotFoundError, OSError) as e:
         print(f"Error: {e}")
         sys.exit(1)

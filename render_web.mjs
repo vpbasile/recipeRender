@@ -13,7 +13,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const OUTPUT_DIR = path.join(__dirname, 'docs');
+const OUTPUT_DIR = path.join(__dirname, 'output');
 const RECIPES_DIR = path.join(__dirname, 'recipes');
 const STYLE_PATH = path.join(__dirname, 'style.yaml');
 const PYTHON_BIN = path.join(__dirname, '.venv', 'bin', 'python');
@@ -31,7 +31,7 @@ function fontStack(fontName) {
   return 'system-ui, sans-serif';
 }
 
-async function chooseRecipePaths() {
+async function listRecipePaths() {
   let recipeFiles;
   try {
     recipeFiles = (await fs.readdir(RECIPES_DIR))
@@ -44,6 +44,18 @@ async function chooseRecipePaths() {
   if (recipeFiles.length === 0) {
     throw new Error(`No recipe files found in: ${RECIPES_DIR}`);
   }
+
+  return recipeFiles.map((name) => path.join(RECIPES_DIR, name));
+}
+
+async function listBundleRecipePaths() {
+  const recipePaths = await listRecipePaths();
+  return recipePaths.filter((recipePath) => path.basename(recipePath).toLowerCase() !== 'test.yaml');
+}
+
+async function chooseRecipePaths() {
+  const recipePaths = await listRecipePaths();
+  const recipeFiles = recipePaths.map((recipePath) => path.basename(recipePath));
 
   console.log('Choose a recipe:');
   console.log('  0) All recipes');
@@ -62,10 +74,10 @@ async function chooseRecipePaths() {
       if (/^\d+$/.test(choice)) {
         const index = Number(choice);
         if (index === 0) {
-          return recipeFiles.map((name) => path.join(RECIPES_DIR, name));
+          return recipePaths;
         }
         if (index >= 1 && index <= recipeFiles.length) {
-          return [path.join(RECIPES_DIR, recipeFiles[index - 1])];
+          return [recipePaths[index - 1]];
         }
       }
       console.log('Invalid selection. Try again.');
@@ -818,9 +830,11 @@ function IndexDocument({ recipes, style }) {
 }
 
 async function main() {
-  if (process.argv.length > 2) {
+  const args = process.argv.slice(2);
+  const chooseAll = args.length === 1 && args[0] === '--all';
+  if (!chooseAll && args.length > 0) {
     console.error('Error: command-line recipe arguments are no longer supported.');
-    console.error('Run node render_web.mjs and choose from the menu.');
+    console.error('Run node render_web.mjs and choose from the menu, or use --all.');
     process.exit(1);
   }
 
@@ -833,7 +847,7 @@ async function main() {
 
   let recipePaths;
   try {
-    recipePaths = await chooseRecipePaths();
+    recipePaths = chooseAll ? await listBundleRecipePaths() : await chooseRecipePaths();
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);

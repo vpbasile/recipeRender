@@ -1,60 +1,75 @@
 title: Chicken Peanut Stew
-subtitle: Makes 2 servings · Great over rice · Finish with fresh lime juice
+subtitle: Serves 2 · Great over rice or hearty whole-grain bread · Top with fresh microgreens
+
+# ─── PAGE 1: INGREDIENTS & EQUIPMENT ─────────────────────────────────────────
 
 ingredients:
-  - Baby spinach, 1/2 lb
-  - Plum tomatoes, 3
-  - Red bell pepper, 1
-  - Onion, 1
-  - Limes, 2
+  - Red bell pepper - 1
+  - Onion - 1
+  - Plum tomatoes - 3
+  - Baby spinach - 1/2 lb
+  - Lime - 2
   - Ginger paste
-  - Garlic paste
-  - Neutral oil, 2 Tbsp
-  - Sesame oil, 1 tsp
-  - Chili powder
-  - Brown sugar or honey, 2 tsp
-  - Salt
-  - Black pepper
-  - Peanut butter powder, 4 Tbsp
-  - Chicken thighs, 2
-  - Broth or stock, 2 cups
+  - Garlic paste, plus more to taste
+  - Neutral oil - 2 Tbsp
+  - Sesame oil - 1 tsp
+  - Chili powder - 1/2 tsp, plus more to taste
+  - Brown sugar or honey - 2 tsp, plus more to taste
+  - Peanut butter powder - 1/4 cup
+  - Chicken thighs - 2
+  - Broth or stock - 2 cups
+  - Salt - 1 tsp, plus more to taste
+  - Black pepper, to taste
+
+# ─── PAGE 2: PREP ─────────────────────────────────────────────────────────────
 
 prep:
   - step: Wash and dry all produce.
-  - step: Zest both limes into the marinating dish.
-  - vessel: Marinating Dish
+
+  - vessel: Chicken Marinade
     steps:
-      - Into the dish, juice half a lime (reserve 1.5 limes for finishing).
-      - Into the dish, measure the neutral oil (2 Tbsp), sesame oil (1 tsp), ginger paste, garlic paste, brown sugar or honey (2 tsp), salt (1 tsp), black pepper, and chili powder (1/2 tsp). Stir to combine.
-      - Slice the chicken thighs into bite-size pieces and add them to the dish. Toss to coat.
-      - Marinate at least 15 minutes.
+      - Zest both limes into the vessel, then cut the limes in half.
+      - Juice of half a lime
+      - Ginger paste
+      - Garlic paste
+      - Neutral oil (2 Tbsp)
+      - Brown sugar or honey (2 tsp)
+      - Sesame oil (1 tsp)
+      - Salt (1 tsp)
+      - Chili powder (1/2 tsp)
+      - Black pepper, to taste
+      - Whisk to combine.
+      - Slice the chicken into bite-size pieces, add to the marinade, and toss to coat. Marinate at least 15 minutes.
+
   - step: Slice the onion and pepper into bite-size pieces.
   - step: Dice the tomatoes.
-  - step: Measure 2 cups broth or stock.
-  - step: Measure 4 Tbsp peanut butter powder.
-  - step: Measure 1/2 lb baby spinach.
+  - step: Measure 2 cups stock.
+  - step: Measure 1/4 cup peanut butter powder.
+  - step: Measure 1/2 lb spinach.
+
+# ─── PAGE 3: COOK ─────────────────────────────────────────────────────────────
 
 cook:
-  - phase: Prepare
+  - phase: Brown the Chicken
     steps:
-      - Preheat a pan over medium-high heat.
-
-  - phase: Cook the Chicken
-    steps:
-      - Add the chicken with its marinade to the hot pan. Cook undisturbed for 2 minutes.
-      - Turn the chicken over and cook undisturbed for another 2 minutes to brown.
-      - Stir and cook for another 5 minutes, stirring occasionally.
+      - Heat a pan over medium-high heat and add the marinated chicken.
+      - Cook undisturbed for 2 minutes.
+      - Turn the chicken and cook for another 2 minutes to brown.
+      - Stir, then cook for 5 minutes, stirring occasionally.
       - Set the chicken aside.
 
-  - phase: Build the Stew
+  - phase: Cook the Aromatics
     steps:
-      - In the same pan, cook the onions and peppers over medium heat until soft and translucent, up to 7 minutes.
-      - Add more garlic now if desired, and cook until fragrant.
-      - Add the broth, peanut butter powder, chicken, and tomatoes. Stir to combine.
-      - Bring to a boil, then reduce to a simmer. Cook uncovered for 20-25 minutes.
-      - Taste and adjust seasonings — salt, pepper, chili powder, brown sugar — as needed.
+      - Salt the onion and pepper and cook until soft and translucent, about 7 minutes.
+      - If using more garlic, add it now and cook until fragrant.
 
-  - phase: Finish
+  - phase: Simmer the Stew
+    steps:
+      - Add the broth, peanut butter powder, chicken, and tomatoes.
+      - Bring to a boil, then reduce to a simmer and cook uncovered for 20-25 minutes.
+      - Taste and adjust seasonings (salt, pepper, chili powder, brown sugar) as needed.
+
+  - phase: Finish and Serve
     steps:
       - Stir in the spinach and turn off the heat as soon as it wilts.
-      - Squeeze in the juice of the remaining limes. Serve immediately.
+      - Serve with the remaining lime juice.

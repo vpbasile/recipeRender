@@ -12,7 +12,9 @@ To run the application, place your YAML file in the recipes directory and run:
 ./run
 
 The script first asks whether you want a PDF, a static web page, or an EPUB, then prompts you to choose a recipe.
-Outputs are written to output/<recipe>.pdf, docs/<recipe>.html, or output/<recipe>.epub.
+Outputs are written to output/<recipe>.pdf, output/<recipe>.html, or output/<recipe>.epub.
+
+The first menu also includes a default bundle option. It skips the test recipe, generates individual PDFs for every other recipe, writes one HTML page per recipe plus output/index.html, and creates a single indexed EPUB at output/recipes.epub.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request with your changes.
