@@ -11,8 +11,8 @@ npm install
 To run the application, place your YAML file in the recipes directory and run:
 ./run
 
-The script first asks whether you want a PDF or a static web page, then prompts you to choose a recipe.
-Outputs are written to output/<recipe>.pdf or docs/<recipe>.html.
+The script first asks whether you want a PDF, a static web page, or an EPUB, then prompts you to choose a recipe.
+Outputs are written to output/<recipe>.pdf, docs/<recipe>.html, or output/<recipe>.epub.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request with your changes.
